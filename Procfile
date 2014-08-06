@@ -1,0 +1,1 @@
+web: gunicorn -w 8 recordtracsetup:app
