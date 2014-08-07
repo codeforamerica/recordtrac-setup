@@ -18,6 +18,10 @@ import oauth2
 heroku_authorize_url = 'https://id.heroku.com/oauth/authorize'
 heroku_access_token_url = 'https://id.heroku.com/oauth/token'
 
+heroku_app_setup_url = 'https://api.heroku.com/app-setups'
+heroku_app_setups_template = 'https://api.heroku.com/app-setups/{0}'
+heroku_app_activity_template = 'https://dashboard.heroku.com/apps/{0}/activity'
+
 class SetupError (Exception):
     pass
 
@@ -73,10 +77,6 @@ def prepare_app():
     
     return redirect(heroku_authorize_url + '?' + query_string)
 
-    resp = post('https://api.heroku.com/oauth/authorizations', data=query_string)
-    return callback_heroku(resp)
-
-
 @app.route('/tarball/<path:filename>')
 def get_tarball(filename):
     ''' Return the named application tarball from the temp directory.
@@ -85,31 +85,36 @@ def get_tarball(filename):
     
     return send_file(filepath)
 
-
-def callback_heroku(callback):
+@app.route('/callback-heroku')
+def callback_heroku():
     ''' Complete Heroku authentication, start app-setup, redirect to app page.
     '''
-    resp = json.loads(callback.content)
-    access_token = resp['id']
-    grant = dict(code = access_token, type = 'authorization_code')
-    client = dict(secret = access_token)
-    refresh_token = dict(token = access_token)
-    data = dict(grant_type = 'authorization_code', client_secret = access_token, grant = grant, client = client,
-                refresh_token = refresh_token, code = access_token)
-    
-    resp = post('https://api.heroku.com/oauth/tokens', data=data)
-    access = json.loads(resp.content)
-    access_token, token_type = access['access_token'], access['token_type']
+    code, tar_id = request.args.get('code'), request.args.get('state')
+    client_id, client_secret, redirect_uri = heroku_client_info(request)
 
     try:
-        tar = basename('http://github.com/codeforamerica/recordtrac/tarball/master/')
-        url = 'https://{0}/tarball/{1}?token={2}'.format(request.host, tar, access_token)
-        app_name = create_app(access_token, url)
-
-        return redirect('https://dashboard.heroku.com/apps/{0}/activity'.format(app_name))
+        data = dict(grant_type='authorization_code', code=code,
+                    client_secret=client_secret, redirect_uri='')
     
-    finally:
-        os.remove(tarpath)
+        response = post(heroku_access_token_url, data=data)
+        access = response.json()
+    
+        if response.status_code != 200:
+            if 'message' in access:
+                raise SetupError('Heroku says "{0}"'.format(access['message']))
+            else:
+                raise SetupError('Heroku Error')
+    
+        raise NotImplementedError('Tarball: {0}'.format(tar_id))
+        
+        #url = '{0}://{1}/tarball/{2}'.format(get_scheme(request), request.host, tar_id)
+        #app_name = create_app(access['access_token'], url)
+        #
+        #return redirect(heroku_app_activity_template.format(app_name))
+    
+    except SetupError, e:
+        values = dict(style_base=get_style_base(request), message=e.message)
+        return make_response(render_template('error.html', **values), 400)
 
 def get_scheme(request):
     ''' Get the current URL scheme, e.g. 'http' or 'https'.
@@ -134,10 +139,12 @@ def heroku_client_info(request):
     scheme, host = get_scheme(request), request.host
     
     # Should be in config:
-    if host == '127.0.0.1:5000':
+    if host == 'localhost:5000':
         return "e46e254a-d99e-47c1-83bd-f9bc9854d467", "8cfd15f1-89b6-4516-9650-ce6650c78b4c", '{0}://{1}/callback-heroku'.format(scheme, host)
-    else:
+    elif host == 'recordtrac-setup.herokuapp.com':
         return "830d0bcb-93b1-4520-aff5-6d09c67ef39a", "df960f36-7114-42fc-ae44-4d30a55e0a44", '{0}://{1}/callback-heroku'.format(scheme, host)
+    else:
+        raise NotImplementedError(host)
 
 def prepare_tarball(url, app):
     ''' Prepare a tarball with app.json from the source URL.
@@ -178,13 +185,13 @@ def create_app(access_token, source_url):
                'Authorization': 'Bearer {0}'.format(access_token),
                'Accept': 'application/vnd.heroku+json; version=3'}
 
-    posted = client.post('https://api.heroku.com/app-setups', headers=headers, data=data)
+    posted = client.post(heroku_app_setup_url, headers=headers, data=data)
     setup_id = posted.json()['id']
     app_name = posted.json()['app']['name']
 
     while True:
         sleep(1)
-        gotten = client.get('https://api.heroku.com/app-setups/{0}'.format(setup_id), headers=headers)
+        gotten = client.get(heroku_app_setups_template.format(setup_id), headers=headers)
         setup = gotten.json()
     
         if setup['status'] == 'failed':
