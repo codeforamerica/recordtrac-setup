@@ -15,6 +15,8 @@ from requests import get, post, Session
 from flask.ext.heroku import Heroku
 import oauth2
 
+heroku_authorize_url = 'https://id.heroku.com/oauth/authorize'
+heroku_access_token_url = 'https://id.heroku.com/oauth/token'
 
 class SetupError (Exception):
     pass
@@ -65,10 +67,11 @@ def prepare_app():
     
     client_id, _, redirect_uri = heroku_client_info(request)
     
-    query_string = dict(client=client_id, redirect_uri=redirect_uri,
-                                  response_type='code', scope=['global'],
-                                  state=tarpath, expires_in = 2592000, description = "RecordTrac setup")
+    query_string = urlencode(dict(client_id=client_id, redirect_uri=redirect_uri,
+                                  response_type='code', scope='global',
+                                  state=tarpath, expires_in = 2592000, description = "RecordTrac setup"))
     
+    return redirect(heroku_authorize_url + '?' + query_string)
 
     resp = post('https://api.heroku.com/oauth/authorizations', data=query_string)
     return callback_heroku(resp)
@@ -129,9 +132,12 @@ def heroku_client_info(request):
     ''' Return Client ID, secret, and redirect URI for Heroku OAuth use.
     '''
     scheme, host = get_scheme(request), request.host
-
+    
     # Should be in config:
-    return "830d0bcb-93b1-4520-aff5-6d09c67ef39a", "df960f36-7114-42fc-ae44-4d30a55e0a44", '{0}://{1}/callback-heroku'.format(scheme, host)
+    if host == '127.0.0.1:5000':
+        return "e46e254a-d99e-47c1-83bd-f9bc9854d467", "8cfd15f1-89b6-4516-9650-ce6650c78b4c", '{0}://{1}/callback-heroku'.format(scheme, host)
+    else:
+        return "830d0bcb-93b1-4520-aff5-6d09c67ef39a", "df960f36-7114-42fc-ae44-4d30a55e0a44", '{0}://{1}/callback-heroku'.format(scheme, host)
 
 def prepare_tarball(url, app):
     ''' Prepare a tarball with app.json from the source URL.
