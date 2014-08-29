@@ -74,8 +74,19 @@
 	            </ul>
 
 	            <form action="/prepare-app" method="POST">
-               				<h3>1. Create Your Application</h3>
-                
+               		<h3>1. Create Your Application</h3>
+               			<input type="text" name = "AGENCY_NAME"> Agency name </input><br/>
+                		<input type="text" name = "DEFAULT_OWNER_EMAIL"> Default point of contact's e-mail </input><br/>
+                		<input type="text" name = "DEFAULT_OWNER_REASON"> Default point of contact's title </input><br/>
+                		<input type="hidden" name="ENVIRONMENT" value="DEVELOPMENT"/>
+                		<input type="hidden" name="DAYS_TO_FULFILL" value="10"/>
+                		<input type="hidden" name="DAYS_AFTER_EXTENSION" value="14"/>
+                		<input type="hidden" name="DAYS_UNTIL_OVERDUE" value="2"/>
+                		<input type="hidden" name="UTC_OFFSET" value="7"/>
+                		<input type="hidden" name="TIMEZONE" value="US/Pacific"/>
+                		<input type="hidden" name="SECRET_KEY" value="can this be randomly generated here?"/>
+                		<!-- <input type="hidden" name="APPLICATION_URL" value="This should be set to Heroku URL returned."/> -->
+
                     	<div class="alert-info">
                     		<p>
 		                        <p><button>Create RecordTrac instance</button></p>
@@ -87,13 +98,9 @@
 		    </section>
 		    <section id="what">
 		        <h2>What is RecordTrac?</h2>
-		        <p>Blurb.</p>
+		        <p>[Link to documentation.]</p>
 		    </section>
-		    <section id="uses">
-		        <h2>Suggested uses</h2>
-	            <p>Blurb.</p>
 
-		    </section>
 		    
 		    <section id="license">
 		    	<h2>License</h2>
