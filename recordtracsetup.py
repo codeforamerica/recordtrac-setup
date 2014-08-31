@@ -41,31 +41,42 @@ def index():
 def prepare_app():
     ''' Prepare app, ask Heroku to authenticate, return to /callback-heroku.
     '''
-    application_url = "http://0.0.0.0:5000"
-    scribd_api_key = "not supplied"
-    scribd_api_secret = "not supplied"
-    host_url = "not supplied"
-    mail_username = "not supplied"
-    mail_password = "not supplied"
-    sqlalchemy_database_uri = "not supplied"
-    akismet_key = "not supplied"
-    list_of_admins = "not supplied"
-    recaptcha_public_key = "not supplied"
-    recaptcha_private_key = "not supplied"
-    agency_name = "City of X"
-    default_owner_email = "richa@codeforamerica.org"
-    default_owner_reason = "a reason"
-    google_feedback_form_id = "not supplied"
-    liaisons_url = "not supplied"
-    staff_url = "not supplied"
-    logo_on_white_url = "not supplied"
-    logo_on_black_url = "not supplied"
-    default_mail_sender = "not supplied"
+    ns = 'not supplied'
+    
+    env = dict(
+        # required form fields
+        AGENCY_NAME = request.form.get('AGENCY_NAME', ns),
+        DEFAULT_OWNER_EMAIL = request.form.get('DEFAULT_OWNER_EMAIL', ns),
+        DEFAULT_OWNER_REASON = request.form.get('DEFAULT_OWNER_REASON', ns),
 
+        # hidden form fields
+        ENVIRONMENT = request.form.get('ENVIRONMENT', ns),
+        DAYS_TO_FULFILL = request.form.get('DAYS_TO_FULFILL', ns),
+        DAYS_AFTER_EXTENSION = request.form.get('DAYS_AFTER_EXTENSION', ns),
+        DAYS_UNTIL_OVERDUE = request.form.get('DAYS_UNTIL_OVERDUE', ns),
+        TIMEZONE = request.form.get('TIMEZONE', ns),
+        SECRET_KEY = request.form.get('SECRET_KEY', ns),
 
-    env = dict(ENVIRONMENT = 'PRODUCTION', APPLICATION_URL = application_url, SCRIBD_API_KEY = scribd_api_key, SCRIBD_API_SECRET = scribd_api_secret, HOST_URL = host_url, MAIL_USERNAME = mail_username, MAIL_PASSWORD = mail_password, DEFAULT_MAIL_SENDER = default_mail_sender, SECRET_KEY = '123456789setthistorandomnumer', SQLALCHEMY_DATABASE_URI = 'postgresql://localhost/recordtrac', AKISMET_KEY = akismet_key, LIST_OF_ADMINS = list_of_admins, RECAPTCHA_PUBLIC_KEY = recaptcha_public_key, RECAPTCHA_PRIVATE_KEY = recaptcha_private_key, AGENCY_NAME = agency_name, DEFAULT_OWNER_EMAIL = default_owner_email, DEFAULT_OWNER_REASON = default_owner_reason, GOOGLE_FEEDBACK_FORM_ID = google_feedback_form_id, LIAISONS_URL = liaisons_url, STAFF_URL = staff_url, LOGO_ON_WHITE_URL = logo_on_white_url, LOGO_ON_BLACK_URL = logo_on_black_url )
-
-
+        # missing form fields
+        APPLICATION_URL = request.form.get('APPLICATION_URL', "http://0.0.0.0:5000"),
+        SCRIBD_API_KEY = request.form.get('SCRIBD_API_KEY', ns),
+        SCRIBD_API_SECRET = request.form.get('SCRIBD_API_SECRET', ns),
+        HOST_URL = request.form.get('HOST_URL', ns),
+        MAIL_USERNAME = request.form.get('MAIL_USERNAME', ns),
+        MAIL_PASSWORD = request.form.get('MAIL_PASSWORD', ns),
+        DEFAULT_MAIL_SENDER = request.form.get('DEFAULT_MAIL_SENDER', ns),
+        SQLALCHEMY_DATABASE_URI = request.form.get('SQLALCHEMY_DATABASE_URI', 'postgresql://localhost/recordtrac'),
+        AKISMET_KEY = request.form.get('AKISMET_KEY', ns),
+        LIST_OF_ADMINS = request.form.get('LIST_OF_ADMINS', ns),
+        RECAPTCHA_PUBLIC_KEY = request.form.get('RECAPTCHA_PUBLIC_KEY', ns),
+        RECAPTCHA_PRIVATE_KEY = request.form.get('RECAPTCHA_PRIVATE_KEY', ns),
+        GOOGLE_FEEDBACK_FORM_ID = request.form.get('GOOGLE_FEEDBACK_FORM_ID', ns),
+        LIAISONS_URL = request.form.get('LIAISONS_URL', ns),
+        STAFF_URL = request.form.get('STAFF_URL', ns),
+        LOGO_ON_WHITE_URL = request.form.get('LOGO_ON_WHITE_URL', ns),
+        LOGO_ON_BLACK_URL = request.form.get('LOGO_ON_BLACK_URL', ns)
+        )
+    
     tarpath = prepare_tarball('http://github.com/codeforamerica/recordtrac/tarball/master/',
                               dict(name='RecordTrac', env=env))
     
