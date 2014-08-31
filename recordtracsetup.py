@@ -116,7 +116,7 @@ def callback_heroku():
             else:
                 raise SetupError('Heroku Error')
     
-        url = 'https://{0}/tarball/{1}'.format(request.host, tar_id)
+        url = '{0}://{1}/tarball/{2}'.format(get_scheme(request), request.host, tar_id)
         app_name = create_app(access['access_token'], url)
         
         return redirect(heroku_app_activity_template.format(app_name))
