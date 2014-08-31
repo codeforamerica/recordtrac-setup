@@ -124,6 +124,12 @@ def callback_heroku():
     except SetupError, e:
         values = dict(style_base=get_style_base(request), message=e.message)
         return make_response(render_template('error.html', **values), 400)
+    
+    except:
+        import traceback
+        resp = make_response(traceback.format_exc())
+        resp.headers['Content-Type'] = 'text/plain'
+        return resp
 
 def get_scheme(request):
     ''' Get the current URL scheme, e.g. 'http' or 'https'.
@@ -195,6 +201,10 @@ def create_app(access_token, source_url):
                'Accept': 'application/vnd.heroku+json; version=3'}
 
     posted = client.post(heroku_app_setup_url, headers=headers, data=data)
+    
+    if posted.status_code in range(400, 499):
+        raise SetupError(posted.json().get('message', str(posted.status_code)))
+    
     setup_id = posted.json()['id']
     app_name = posted.json()['app']['name']
 
