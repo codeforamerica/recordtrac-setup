@@ -116,12 +116,10 @@ def callback_heroku():
             else:
                 raise SetupError('Heroku Error')
     
-        raise NotImplementedError('Tarball: {0}'.format(tar_id))
+        url = '{0}://{1}/tarball/{2}'.format(get_scheme(request), request.host, tar_id)
+        app_name = create_app(access['access_token'], url)
         
-        #url = '{0}://{1}/tarball/{2}'.format(get_scheme(request), request.host, tar_id)
-        #app_name = create_app(access['access_token'], url)
-        #
-        #return redirect(heroku_app_activity_template.format(app_name))
+        return redirect(heroku_app_activity_template.format(app_name))
     
     except SetupError, e:
         values = dict(style_base=get_style_base(request), message=e.message)
