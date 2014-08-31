@@ -77,8 +77,11 @@ def prepare_app():
         LOGO_ON_BLACK_URL = request.form.get('LOGO_ON_BLACK_URL', ns)
         )
     
+    app_json = dict(name='RecordTrac', env=env, addons=['heroku-postgresql:hobby-dev'],
+                    scripts=dict(postdeploy='python db_setup.py'))
+    
     tarpath = prepare_tarball('http://github.com/codeforamerica/recordtrac/tarball/master/',
-                              dict(name='RecordTrac', env=env))
+                              app_json)
     
     client_id, _, redirect_uri = heroku_client_info(request)
     
