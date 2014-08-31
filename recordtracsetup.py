@@ -84,7 +84,8 @@ def prepare_app():
     
     query_string = urlencode(dict(client_id=client_id, redirect_uri=redirect_uri,
                                   response_type='code', scope='global',
-                                  state=tarpath, expires_in = 2592000, description = "RecordTrac setup"))
+                                  state=basename(tarpath), expires_in=2592000,
+                                  description="RecordTrac setup"))
     
     return redirect(heroku_authorize_url + '?' + query_string)
 
