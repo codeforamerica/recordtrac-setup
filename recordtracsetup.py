@@ -41,39 +41,54 @@ def index():
 def prepare_app():
     ''' Prepare app, ask Heroku to authenticate, return to /callback-heroku.
     '''
-    application_url = "http://0.0.0.0:5000"
-    scribd_api_key = "not supplied"
-    scribd_api_secret = "not supplied"
-    host_url = "not supplied"
-    mail_username = "not supplied"
-    mail_password = "not supplied"
-    sqlalchemy_database_uri = "not supplied"
-    akismet_key = "not supplied"
-    list_of_admins = "not supplied"
-    recaptcha_public_key = "not supplied"
-    recaptcha_private_key = "not supplied"
-    agency_name = "City of X"
-    default_owner_email = "richa@codeforamerica.org"
-    default_owner_reason = "a reason"
-    google_feedback_form_id = "not supplied"
-    liaisons_url = "not supplied"
-    staff_url = "not supplied"
-    logo_on_white_url = "not supplied"
-    logo_on_black_url = "not supplied"
-    default_mail_sender = "not supplied"
+    ns = 'not supplied'
+    
+    env = dict(
+        # required form fields
+        AGENCY_NAME = request.form.get('AGENCY_NAME', ns),
+        DEFAULT_OWNER_EMAIL = request.form.get('DEFAULT_OWNER_EMAIL', ns),
+        DEFAULT_OWNER_REASON = request.form.get('DEFAULT_OWNER_REASON', ns),
 
+        # hidden form fields
+        ENVIRONMENT = request.form.get('ENVIRONMENT', ns),
+        DAYS_TO_FULFILL = request.form.get('DAYS_TO_FULFILL', ns),
+        DAYS_AFTER_EXTENSION = request.form.get('DAYS_AFTER_EXTENSION', ns),
+        DAYS_UNTIL_OVERDUE = request.form.get('DAYS_UNTIL_OVERDUE', ns),
+        TIMEZONE = request.form.get('TIMEZONE', ns),
+        SECRET_KEY = request.form.get('SECRET_KEY', ns),
 
-    env = dict(ENVIRONMENT = 'PRODUCTION', APPLICATION_URL = application_url, SCRIBD_API_KEY = scribd_api_key, SCRIBD_API_SECRET = scribd_api_secret, HOST_URL = host_url, MAIL_USERNAME = mail_username, MAIL_PASSWORD = mail_password, DEFAULT_MAIL_SENDER = default_mail_sender, SECRET_KEY = '123456789setthistorandomnumer', SQLALCHEMY_DATABASE_URI = 'postgresql://localhost/recordtrac', AKISMET_KEY = akismet_key, LIST_OF_ADMINS = list_of_admins, RECAPTCHA_PUBLIC_KEY = recaptcha_public_key, RECAPTCHA_PRIVATE_KEY = recaptcha_private_key, AGENCY_NAME = agency_name, DEFAULT_OWNER_EMAIL = default_owner_email, DEFAULT_OWNER_REASON = default_owner_reason, GOOGLE_FEEDBACK_FORM_ID = google_feedback_form_id, LIAISONS_URL = liaisons_url, STAFF_URL = staff_url, LOGO_ON_WHITE_URL = logo_on_white_url, LOGO_ON_BLACK_URL = logo_on_black_url )
-
-
+        # missing form fields
+        APPLICATION_URL = request.form.get('APPLICATION_URL', "http://0.0.0.0:5000"),
+        SCRIBD_API_KEY = request.form.get('SCRIBD_API_KEY', ns),
+        SCRIBD_API_SECRET = request.form.get('SCRIBD_API_SECRET', ns),
+        HOST_URL = request.form.get('HOST_URL', ns),
+        MAIL_USERNAME = request.form.get('MAIL_USERNAME', ns),
+        MAIL_PASSWORD = request.form.get('MAIL_PASSWORD', ns),
+        DEFAULT_MAIL_SENDER = request.form.get('DEFAULT_MAIL_SENDER', ns),
+        SQLALCHEMY_DATABASE_URI = request.form.get('SQLALCHEMY_DATABASE_URI', 'postgresql://localhost/recordtrac'),
+        AKISMET_KEY = request.form.get('AKISMET_KEY', ns),
+        LIST_OF_ADMINS = request.form.get('LIST_OF_ADMINS', ns),
+        RECAPTCHA_PUBLIC_KEY = request.form.get('RECAPTCHA_PUBLIC_KEY', ns),
+        RECAPTCHA_PRIVATE_KEY = request.form.get('RECAPTCHA_PRIVATE_KEY', ns),
+        GOOGLE_FEEDBACK_FORM_ID = request.form.get('GOOGLE_FEEDBACK_FORM_ID', ns),
+        LIAISONS_URL = request.form.get('LIAISONS_URL', ns),
+        STAFF_URL = request.form.get('STAFF_URL', ns),
+        LOGO_ON_WHITE_URL = request.form.get('LOGO_ON_WHITE_URL', ns),
+        LOGO_ON_BLACK_URL = request.form.get('LOGO_ON_BLACK_URL', ns)
+        )
+    
+    app_json = dict(name='RecordTrac', env=env, addons=['heroku-postgresql:hobby-dev'],
+                    scripts=dict(postdeploy='python db_setup.py'))
+    
     tarpath = prepare_tarball('http://github.com/codeforamerica/recordtrac/tarball/master/',
-                              dict(name='RecordTrac', env=env))
+                              app_json)
     
     client_id, _, redirect_uri = heroku_client_info(request)
     
     query_string = urlencode(dict(client_id=client_id, redirect_uri=redirect_uri,
                                   response_type='code', scope='global',
-                                  state=tarpath, expires_in = 2592000, description = "RecordTrac setup"))
+                                  state=basename(tarpath), expires_in=2592000,
+                                  description="RecordTrac setup"))
     
     return redirect(heroku_authorize_url + '?' + query_string)
 
@@ -105,16 +120,20 @@ def callback_heroku():
             else:
                 raise SetupError('Heroku Error')
     
-        raise NotImplementedError('Tarball: {0}'.format(tar_id))
+        url = '{0}://{1}/tarball/{2}'.format(get_scheme(request), request.host, tar_id)
+        app_name = create_app(access['access_token'], url)
         
-        #url = '{0}://{1}/tarball/{2}'.format(get_scheme(request), request.host, tar_id)
-        #app_name = create_app(access['access_token'], url)
-        #
-        #return redirect(heroku_app_activity_template.format(app_name))
+        return redirect(heroku_app_activity_template.format(app_name))
     
     except SetupError, e:
         values = dict(style_base=get_style_base(request), message=e.message)
         return make_response(render_template('error.html', **values), 400)
+    
+    except:
+        import traceback
+        resp = make_response(traceback.format_exc())
+        resp.headers['Content-Type'] = 'text/plain'
+        return resp
 
 def get_scheme(request):
     ''' Get the current URL scheme, e.g. 'http' or 'https'.
@@ -177,15 +196,17 @@ def create_app(access_token, source_url):
     client = Session()
     client.trust_env = False # https://github.com/kennethreitz/requests/issues/2066
     
-    recordtrac_url = "http://github.com/codeforamerica/recordtrac/tarball/add-heroku-app-json-file\\"
-
-    data = json.dumps({'source_blob': {'url': recordtrac_url}})
+    data = json.dumps({'source_blob': {'url': source_url}})
 
     headers = {'Content-Type': 'application/json',
                'Authorization': 'Bearer {0}'.format(access_token),
                'Accept': 'application/vnd.heroku+json; version=3'}
 
     posted = client.post(heroku_app_setup_url, headers=headers, data=data)
+    
+    if posted.status_code in range(400, 499):
+        raise SetupError(posted.json().get('message', str(posted.status_code)))
+    
     setup_id = posted.json()['id']
     app_name = posted.json()['app']['name']
 
