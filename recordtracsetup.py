@@ -60,7 +60,7 @@ def prepare_app():
         SECRET_KEY = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(10))
 
         # missing form fields
-        APPLICATION_URL = request.form.get('APPLICATION_URL', "http://0.0.0.0:5000"),
+        APPLICATION_URL = request.form.get('APPLICATION_URL', "http://0.0.0.0:5000")
         # SCRIBD_API_KEY = request.form.get('SCRIBD_API_KEY', ns),
         # SCRIBD_API_SECRET = request.form.get('SCRIBD_API_SECRET', ns),
         # HOST_URL = request.form.get('HOST_URL', ns),
