@@ -33,7 +33,7 @@ heroku = Heroku(app)
 @app.route("/")
 def index():
     ''' Render front page with all the info.
-    
+
         If not running locally, force SSL.
     '''
     return render_template('index.html', style_base=get_style_base(request))
@@ -44,7 +44,7 @@ def prepare_app():
     ''' Prepare app, ask Heroku to authenticate, return to /callback-heroku.
     '''
     ns = 'not supplied'
-    
+
     env = dict(
         # required form fields
         AGENCY_NAME = request.form.get('AGENCY_NAME', ns),
@@ -79,20 +79,20 @@ def prepare_app():
         # LOGO_ON_BLACK_URL = request.form.get('LOGO_ON_BLACK_URL', ns)
         # )
 
-    
+
     app_json = dict(name='RecordTrac', env=env, addons=['heroku-postgresql:hobby-dev'],
                     scripts=dict(postdeploy='python db_setup.py'))
-    
+
     tarpath = prepare_tarball('http://github.com/codeforamerica/recordtrac/tarball/master/',
                               app_json)
-    
+
     client_id, _, redirect_uri = heroku_client_info(request)
-    
+
     query_string = urlencode(dict(client_id=client_id, redirect_uri=redirect_uri,
                                   response_type='code', scope='global',
                                   state=basename(tarpath), expires_in=2592000,
                                   description="RecordTrac setup"))
-    
+
     return redirect(heroku_authorize_url + '?' + query_string)
 
 @app.route('/tarball/<path:filename>')
@@ -100,7 +100,7 @@ def get_tarball(filename):
     ''' Return the named application tarball from the temp directory.
     '''
     filepath = join(os.environ.get('TMPDIR', '/tmp'), filename)
-    
+
     return send_file(filepath)
 
 @app.route('/callback-heroku')
@@ -113,10 +113,10 @@ def callback_heroku():
     try:
         data = dict(grant_type='authorization_code', code=code,
                     client_secret=client_secret, redirect_uri='')
-    
+
         response = post(heroku_access_token_url, data=data)
         access = response.json()
-    
+
         if response.status_code != 200:
             if 'message' in access:
                 raise SetupError('Heroku says "{0}"'.format(access['message']))
@@ -125,13 +125,13 @@ def callback_heroku():
     
         url = '{0}://{1}/tarball/{2}'.format(get_scheme(request), request.host, tar_id)
         app_name = create_app(access['access_token'], url)
-        
+
         return redirect(heroku_app_activity_template.format(app_name))
-    
+
     except SetupError, e:
         values = dict(style_base=get_style_base(request), message=e.message)
         return make_response(render_template('error.html', **values), 400)
-    
+
     except:
         import traceback
         resp = make_response(traceback.format_exc())
@@ -143,7 +143,7 @@ def get_scheme(request):
     '''
     if 'x-forwarded-proto' in request.headers:
         return request.headers['x-forwarded-proto']
-    
+
     return request.scheme
 
 def get_style_base(request):
@@ -174,23 +174,23 @@ def prepare_tarball(url, app):
     got = get(url, allow_redirects=True)
     raw = GzipFile(fileobj=StringIO(got.content))
     tar = TarFile(fileobj=raw)
-    
+
     try:
         dirpath = mkdtemp(prefix='recordtrac-')
         rootdir = join(dirpath, commonprefix(tar.getnames()))
         tar.extractall(dirpath)
-        
+
         if not isdir(rootdir):
             raise Exception('"{0}" is not a directory'.format(rootdir))
 
         with open(join(rootdir, 'app.json'), 'w') as out:
             json.dump(app, out)
-        
+
         tarpath = make_archive(dirpath, 'gztar', rootdir, '.')
-        
+
     finally:
         rmtree(dirpath)
-    
+
     return tarpath
 
 def create_app(access_token, source_url):
@@ -198,7 +198,7 @@ def create_app(access_token, source_url):
     '''
     client = Session()
     client.trust_env = False # https://github.com/kennethreitz/requests/issues/2066
-    
+
     data = json.dumps({'source_blob': {'url': source_url}})
 
     headers = {'Content-Type': 'application/json',
@@ -206,10 +206,10 @@ def create_app(access_token, source_url):
                'Accept': 'application/vnd.heroku+json; version=3'}
 
     posted = client.post(heroku_app_setup_url, headers=headers, data=data)
-    
+
     if posted.status_code in range(400, 499):
         raise SetupError(posted.json().get('message', str(posted.status_code)))
-    
+
     setup_id = posted.json()['id']
     app_name = posted.json()['app']['name']
 
@@ -217,7 +217,7 @@ def create_app(access_token, source_url):
         sleep(1)
         gotten = client.get(heroku_app_setups_template.format(setup_id), headers=headers)
         setup = gotten.json()
-    
+
         if setup['status'] == 'failed':
             raise Exception('Heroku failed to build from {0}, saying "{1}"'.format(source_url, setup['failure_message']))
 
