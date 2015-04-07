@@ -122,7 +122,7 @@ def callback_heroku():
                 raise SetupError('Heroku says "{0}"'.format(access['message']))
             else:
                 raise SetupError('Heroku Error')
-    
+
         url = '{0}://{1}/tarball/{2}'.format(get_scheme(request), request.host, tar_id)
         app_name = create_app(access['access_token'], url)
 
