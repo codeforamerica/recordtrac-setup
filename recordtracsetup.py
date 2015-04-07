@@ -158,15 +158,14 @@ def get_style_base(request):
 def heroku_client_info(request):
     ''' Return Client ID, secret, and redirect URI for Heroku OAuth use.
     '''
+    try:
+        oauth_id = os.environ['HEROKU_OAUTH_ID']
+        oauth_secret = os.environ['HEROKU_OAUTH_SECRET']
+    except KeyError:
+        raise Exception('You must set the HEROKU_OAUTH_ID and HEROKU_OAUTH_SECRET environment variables.')
+
     scheme, host = get_scheme(request), request.host
-    
-    # Should be in config:
-    if host == 'localhost:5000':
-        return "e46e254a-d99e-47c1-83bd-f9bc9854d467", "8cfd15f1-89b6-4516-9650-ce6650c78b4c", '{0}://{1}/callback-heroku'.format(scheme, host)
-    elif host == 'recordtrac-setup.herokuapp.com':
-        return "830d0bcb-93b1-4520-aff5-6d09c67ef39a", "df960f36-7114-42fc-ae44-4d30a55e0a44", '{0}://{1}/callback-heroku'.format(scheme, host)
-    else:
-        raise NotImplementedError(host)
+    return oauth_id, oauth_secret, '{0}://{1}/callback-heroku'.format(scheme, host)
 
 def prepare_tarball(url, app):
     ''' Prepare a tarball with app.json from the source URL.
