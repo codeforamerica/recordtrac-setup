@@ -61,8 +61,8 @@ def prepare_app():
 
         # missing form fields
         APPLICATION_URL = request.form.get('APPLICATION_URL', "http://0.0.0.0:5000"),
-        # SCRIBD_API_KEY = request.form.get('SCRIBD_API_KEY', ns),
-        # SCRIBD_API_SECRET = request.form.get('SCRIBD_API_SECRET', ns),
+        SCRIBD_API_KEY = request.form.get('SCRIBD_API_KEY') or ns,
+        SCRIBD_API_SECRET = request.form.get('SCRIBD_API_SECRET') or ns,
         # HOST_URL = request.form.get('HOST_URL', ns),
         # MAIL_USERNAME = request.form.get('MAIL_USERNAME', ns),
         # MAIL_PASSWORD = request.form.get('MAIL_PASSWORD', ns),
