@@ -47,16 +47,16 @@ def prepare_app():
 
     env = dict(
         # required form fields
-        AGENCY_NAME = request.form.get('AGENCY_NAME', ns),
-        DEFAULT_OWNER_EMAIL = request.form.get('DEFAULT_OWNER_EMAIL', ns),
-        DEFAULT_OWNER_REASON = request.form.get('DEFAULT_OWNER_REASON', ns),
+        AGENCY_NAME = request.form.get('AGENCY_NAME') or ns,
+        DEFAULT_OWNER_EMAIL = request.form.get('DEFAULT_OWNER_EMAIL') or ns,
+        DEFAULT_OWNER_REASON = request.form.get('DEFAULT_OWNER_REASON') or ns,
 
         # hidden form fields
-        ENVIRONMENT = request.form.get('ENVIRONMENT', ns),
-        DAYS_TO_FULFILL = request.form.get('DAYS_TO_FULFILL', ns),
-        DAYS_AFTER_EXTENSION = request.form.get('DAYS_AFTER_EXTENSION', ns),
-        DAYS_UNTIL_OVERDUE = request.form.get('DAYS_UNTIL_OVERDUE', ns),
-        TIMEZONE = request.form.get('TIMEZONE', ns),
+        ENVIRONMENT = request.form.get('ENVIRONMENT') or ns,
+        DAYS_TO_FULFILL = request.form.get('DAYS_TO_FULFILL') or ns,
+        DAYS_AFTER_EXTENSION = request.form.get('DAYS_AFTER_EXTENSION') or ns,
+        DAYS_UNTIL_OVERDUE = request.form.get('DAYS_UNTIL_OVERDUE') or ns,
+        TIMEZONE = request.form.get('TIMEZONE') or ns,
         SECRET_KEY = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(10)),
 
         # missing form fields
