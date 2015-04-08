@@ -41,32 +41,32 @@
   <div class="layout-semibreve">
 
     <header class="heading">
-        <h1>RecordTrac setup</h1>
-      </header>
+      <h1>RecordTrac setup</h1>
+    </header>
 
-      <div class="layout-minor">
+    <div class="layout-minor">
 
-          <nav role="navigation" class="toc" id="toc">
+      <nav role="navigation" class="toc" id="toc">
 
-            <h2>Table of Contents</h2>
+        <h2>Table of Contents</h2>
 
-            <ul class="sectlevel1">
-                <li><a href="#setup">Setup</a>
-                  <ul>
-                    <li><a href="#info">Applicatioon Information</a></li>
-                    <li><a href="#spam">Spam Protection</a></li>
-                    <li><a href="#email">Email notification</a></li>
-                    <li><a href="#docs">Document Storage</a></li>
-                  </ul>
-                </li>
-                <li><a href="#what">What is the dashboard?</a></li>
-                <li><a href="#uses">Suggested uses</a></li>
-                <li><a href="#license">Credits and licensing</a></li>
+        <ul class="sectlevel1">
+          <li><a href="#setup">Setup</a>
+            <ul>
+              <li><a href="#info">Applicatioon Information</a></li>
+              <li><a href="#spam">Spam Protection</a></li>
+              <li><a href="#email">Email notification</a></li>
+              <li><a href="#docs">Document Storage</a></li>
             </ul>
+          </li>
+          <li><a href="#what">What is the dashboard?</a></li>
+          <li><a href="#uses">Suggested uses</a></li>
+          <li><a href="#license">Credits and licensing</a></li>
+        </ul>
 
-        </nav>
+      </nav>
 
-        <a class="button" href="https://github.com/codeforamerica/display-screen">Fork on Github</a>
+      <a class="button" href="https://github.com/codeforamerica/display-screen">Fork on Github</a>
 
     </div>
 
@@ -75,63 +75,63 @@
       <section id="setup">
 
         <h2>Setup</h2>
-          <p>Setup is pretty easy, you can do it right from this page. It makes the following assumptions, however:</p>
+        <p>Setup is pretty easy, you can do it right from this page. It makes the following assumptions, however:</p>
+        <ul>
+          <li>You have permission to use, or create, an account with <a href="http://heroku.com">Heroku</a>.</li>
+        </ul>
+
+        <form action="/prepare-app" method="POST">
+          <input type="hidden" name="ENVIRONMENT" value="DEVELOPMENT"/>
+          <input type="hidden" name="DAYS_TO_FULFILL" value="10"/>
+          <input type="hidden" name="DAYS_AFTER_EXTENSION" value="14"/>
+          <input type="hidden" name="DAYS_UNTIL_OVERDUE" value="2"/>
+          <input type="hidden" name="TIMEZONE" value="US/Pacific"/>
+
+          <h3 id="info">1. Create Your Application</h3>
+
+          <input type="text" name = "AGENCY_NAME"> Agency name </input><br/>
+          <input type="text" name = "DEFAULT_OWNER_EMAIL"> Default point of contact's e-mail </input><br/>
+          <input type="text" name = "DEFAULT_OWNER_REASON"> Default point of contact's title </input><br/>
+          <!-- <input type="hidden" name="APPLICATION_URL" value="This should be set to Heroku URL returned."/> -->
+
+          <h3 id="spam">2. Spam Protection</h3>
+
+          <p>RecordTrac uses <a href="http://akismet.com/" target="_blank">Akismet</a> and <a href="https://www.google.com/recaptcha/" target="_blank">ReCaptcha</a> to protect against spam.</p>
           <ul>
-            <li>You have permission to use, or create, an account with <a href="http://heroku.com">Heroku</a>.</li>
+            <li>Sign up for an <strong>Akismet</strong> account <a href="http://akismet.com/plans/" target="_blank">here</a>. Paste your API Key below. Find your key by clicking the <i>Show</i> button in your <i>Account Overview</i>.</li>
+            </li>
+            <li>Sign up for a <strong>reCaptcha</strong> account <a href="https://www.google.com/recaptcha/" target="_blank">here</a>. After logging in, regsiter your site. If you know what domain you will use for your RecordTrac, enter it in the <i>Domains</i> box. Otherwise, you can just enter <code>herokuapp.com</code>. Expand the <i>Keys</i> and paste the site key and site secret below.
+            </li>
           </ul>
+          <p>
+          <label><input type="text" name="AKISMET_KEY"> Akismet Key</label>
+          <label><input type="text" name="RECAPTCHA_PUBLIC_KEY"> reCaptcha Site Key</label>
+          <label><input type="text" name="RECAPTCHA_PRIVATE_KEY"> reCaptcha Secret Key</label>
+          </p>
 
-          <form action="/prepare-app" method="POST">
-            <input type="hidden" name="ENVIRONMENT" value="DEVELOPMENT"/>
-            <input type="hidden" name="DAYS_TO_FULFILL" value="10"/>
-            <input type="hidden" name="DAYS_AFTER_EXTENSION" value="14"/>
-            <input type="hidden" name="DAYS_UNTIL_OVERDUE" value="2"/>
-            <input type="hidden" name="TIMEZONE" value="US/Pacific"/>
-
-            <h3 id="info">1. Create Your Application</h3>
-
-            <input type="text" name = "AGENCY_NAME"> Agency name </input><br/>
-            <input type="text" name = "DEFAULT_OWNER_EMAIL"> Default point of contact's e-mail </input><br/>
-            <input type="text" name = "DEFAULT_OWNER_REASON"> Default point of contact's title </input><br/>
-            <!-- <input type="hidden" name="APPLICATION_URL" value="This should be set to Heroku URL returned."/> -->
-
-            <h3 id="spam">2. Spam Protection</h3>
-
-            <p>RecordTrac uses <a href="http://akismet.com/" target="_blank">Akismet</a> and <a href="https://www.google.com/recaptcha/" target="_blank">ReCaptcha</a> to protect against spam.</p>
-            <ul>
-              <li>Sign up for an <strong>Akismet</strong> account <a href="http://akismet.com/plans/" target="_blank">here</a>. Paste your API Key below. Find your key by clicking the <i>Show</i> button in your <i>Account Overview</i>.</li>
-              </li>
-              <li>Sign up for a <strong>reCaptcha</strong> account <a href="https://www.google.com/recaptcha/" target="_blank">here</a>. After logging in, regsiter your site. If you know what domain you will use for your RecordTrac, enter it in the <i>Domains</i> box. Otherwise, you can just enter <code>herokuapp.com</code>. Expand the <i>Keys</i> and paste the site key and site secret below.
-              </li>
-            </ul>
+          <div class="alert-info">
             <p>
-            <label><input type="text" name="AKISMET_KEY"> Akismet Key</label>
-            <label><input type="text" name="RECAPTCHA_PUBLIC_KEY"> reCaptcha Site Key</label>
-            <label><input type="text" name="RECAPTCHA_PRIVATE_KEY"> reCaptcha Secret Key</label>
+              <p><button>Create RecordTrac instance</button></p>
+              <p class="note">When you click <strong>Create RecordTrac instance</strong>, you'll be taken to <a href="http://heroku.com">heroku.com</a>.  If you have an existing account, simply login as normal. If you don't yet have an account, you'll be asked to create one (for free), and then you'll continue through the automated creation process and be given the URL for your new RecordTrac instance!</p>
             </p>
+          </div>
+        </form>
 
-            <div class="alert-info">
-              <p>
-                  <p><button>Create RecordTrac instance</button></p>
-                  <p class="note">When you click <strong>Create RecordTrac instance</strong>, you'll be taken to <a href="http://heroku.com">heroku.com</a>.  If you have an existing account, simply login as normal. If you don't yet have an account, you'll be asked to create one (for free), and then you'll continue through the automated creation process and be given the URL for your new RecordTrac instance!</p>
-              </p>
-            </div>
-          </form>
-
-        </section>
-        <section id="what">
-            <h2>What is RecordTrac?</h2>
-            <p>RecordTrac is a tool to help agencies manage and display public records requests. You can learn more about the project <a href="https://github.com/codeforamerica/recordtrac#what-is-recordtrac">here</a>.</p>
-        </section>
+      </section>
+      <section id="what">
+        <h2>What is RecordTrac?</h2>
+        <p>RecordTrac is a tool to help agencies manage and display public records requests. You can learn more about the project <a href="https://github.com/codeforamerica/recordtrac#what-is-recordtrac">here</a>.</p>
+      </section>
 
 
-        <section id="license">
-          <h2>License</h2>
+      <section id="license">
+        <h2>License</h2>
 
-          <p>Copyright (c) 2014, Code for America </p>
-          <p>Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby granted, provided that the above copyright notice and this permission notice appear in all copies.</p>
-          <p>THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</p>
+        <p>Copyright (c) 2014, Code for America </p>
+        <p>Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby granted, provided that the above copyright notice and this permission notice appear in all copies.</p>
+        <p>THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</p>
 
-        </section>
+      </section>
 
     </main>
 
