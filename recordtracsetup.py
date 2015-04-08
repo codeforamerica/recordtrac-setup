@@ -80,7 +80,7 @@ def prepare_app():
         )
 
 
-    app_json = dict(name='RecordTrac', env=env, addons=['heroku-postgresql:hobby-dev'],
+    app_json = dict(name='RecordTrac', env=env, addons=['heroku-postgresql:hobby-dev', 'sendgrid'],
                     scripts=dict(postdeploy='python db_setup.py'))
 
     tarpath = prepare_tarball('http://github.com/codeforamerica/recordtrac/tarball/master/',

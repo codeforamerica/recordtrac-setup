@@ -109,6 +109,14 @@
             <label><input type="text" name="RECAPTCHA_PRIVATE_KEY"> reCaptcha Secret Key</label>
           </fieldset>
 
+          <h3 id="email">3. Email Notifications</h3>
+
+          <p>RecordTrac uses <a href="https://sendgrid.com/" target="_blank">SendGrid</a> to send email notifications to people requesting information and to agency contacts.</p>
+          <fieldset>
+            <!-- TODO: In RecordTrac, use the SENDGRID_USERNAME and SENDGRID_PASSWORD so that we can have Heroku set up SendGrid automatically and avoid having the user go through that step here. Also, see if we can pull the montly limit from the SendGrid API. -->
+            <label><input type="email" placeholder="e.g., noreply@agency.gov" name="DEFAULT_MAIL_SENDER"> Default &ldquo;From&rdquo; Email</label>
+          </fieldset>
+
           <div class="alert-info">
             <p>
               <p><button>Create RecordTrac instance</button></p>
