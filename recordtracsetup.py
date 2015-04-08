@@ -60,7 +60,7 @@ def prepare_app():
         SECRET_KEY = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(10)),
 
         # missing form fields
-        APPLICATION_URL = request.form.get('APPLICATION_URL', "http://0.0.0.0:5000"))
+        APPLICATION_URL = request.form.get('APPLICATION_URL', "http://0.0.0.0:5000"),
         # SCRIBD_API_KEY = request.form.get('SCRIBD_API_KEY', ns),
         # SCRIBD_API_SECRET = request.form.get('SCRIBD_API_SECRET', ns),
         # HOST_URL = request.form.get('HOST_URL', ns),
@@ -68,16 +68,16 @@ def prepare_app():
         # MAIL_PASSWORD = request.form.get('MAIL_PASSWORD', ns),
         # DEFAULT_MAIL_SENDER = request.form.get('DEFAULT_MAIL_SENDER', ns),
         # SQLALCHEMY_DATABASE_URI = request.form.get('SQLALCHEMY_DATABASE_URI', 'postgresql://localhost/recordtrac'),
-        # AKISMET_KEY = request.form.get('AKISMET_KEY', ns),
+        AKISMET_KEY = request.form.get('AKISMET_KEY', ns),
         # LIST_OF_ADMINS = request.form.get('LIST_OF_ADMINS', ns),
-        # RECAPTCHA_PUBLIC_KEY = request.form.get('RECAPTCHA_PUBLIC_KEY', ns),
-        # RECAPTCHA_PRIVATE_KEY = request.form.get('RECAPTCHA_PRIVATE_KEY', ns),
+        RECAPTCHA_PUBLIC_KEY = request.form.get('RECAPTCHA_PUBLIC_KEY', ns),
+        RECAPTCHA_PRIVATE_KEY = request.form.get('RECAPTCHA_PRIVATE_KEY', ns),
         # GOOGLE_FEEDBACK_FORM_ID = request.form.get('GOOGLE_FEEDBACK_FORM_ID', ns),
         # LIAISONS_URL = request.form.get('LIAISONS_URL', ns),
         # STAFF_URL = request.form.get('STAFF_URL', ns),
         # LOGO_ON_WHITE_URL = request.form.get('LOGO_ON_WHITE_URL', ns),
         # LOGO_ON_BLACK_URL = request.form.get('LOGO_ON_BLACK_URL', ns)
-        # )
+        )
 
 
     app_json = dict(name='RecordTrac', env=env, addons=['heroku-postgresql:hobby-dev'],
