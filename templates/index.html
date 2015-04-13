@@ -59,6 +59,7 @@
               <li><a href="#docs">Document Storage</a></li>
             </ul>
           </li>
+          <li><a href="#deploy">Deploy</a></li>
           <li><a href="#what">What is the dashboard?</a></li>
           <li><a href="#uses">Suggested uses</a></li>
           <li><a href="#license">Credits and licensing</a></li>
@@ -72,15 +73,15 @@
 
     <main id="content" class="layout-major">
 
-      <section id="setup">
+      <form action="/prepare-app" method="POST">
+        <section>
 
-        <h2>Setup Your Application</h2>
-        <p>Setup is pretty easy, you can do it right from this page. It makes the following assumptions, however:</p>
-        <ul>
-          <li>You have permission to use, or create, an account with <a href="http://heroku.com">Heroku</a>.</li>
-        </ul>
+          <h2 id="setup">Setup Your Application</h2>
+          <p>Setup is pretty easy, you can do it right from this page. It makes the following assumptions, however:</p>
+          <ul>
+            <li>You have permission to use, or create, an account with <a href="http://heroku.com">Heroku</a>.</li>
+          </ul>
 
-        <form action="/prepare-app" method="POST">
           <input type="hidden" name="ENVIRONMENT" value="DEVELOPMENT"/>
           <input type="hidden" name="DAYS_TO_FULFILL" value="10"/>
           <input type="hidden" name="DAYS_AFTER_EXTENSION" value="14"/>
@@ -128,9 +129,10 @@
             <label><input type="text" name="SCRIBD_API_KEY"> Scribd API Key</label>
             <label><input type="text" name="SCRIBD_API_SECRET"> Scribd API Secret</label>
           </fieldset>
+        </section>
 
-
-          <h3 id="deploy">Deploy Your Application</h3>
+        <section>
+          <h2 id="deploy">Deploy Your Application</h2>
 
           <div class="alert-info">
             <p>
@@ -138,9 +140,9 @@
               <p class="note">When you click <strong>Create RecordTrac instance</strong>, you'll be taken to <a href="http://heroku.com">heroku.com</a>.  If you have an existing account, simply login as normal. If you don't yet have an account, you'll be asked to create one (for free), and then you'll continue through the automated creation process and be given the URL for your new RecordTrac instance!</p>
             </p>
           </div>
-        </form>
+        </section>
+      </form>
 
-      </section>
       <section id="what">
         <h2>What is RecordTrac?</h2>
         <p>RecordTrac is a tool to help agencies manage and display public records requests. You can learn more about the project <a href="https://github.com/codeforamerica/recordtrac#what-is-recordtrac">here</a>.</p>
