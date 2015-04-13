@@ -113,8 +113,16 @@
           <h3 id="email">3. Email Notifications</h3>
 
           <p>RecordTrac uses <a href="https://sendgrid.com/" target="_blank">SendGrid</a> to send email notifications to people requesting information and to agency contacts.</p>
+          <ul>
+            <li>Sign up for a <strong>SendGrid</strong> account. You can start with a free account <a href="https://sendgrid.com/user/signup" target="_blank">here</a>. Enter your SendGrid username and password below.</li>
+            <li>If you chose an account with a monthly email limit higher than 40,000, enter the limit below.</li>
+            <li>Choose an email address that will be used as the <em>From</em> address in emails sent from the RecordTrac instance.</li>
+          </ul>
           <fieldset>
             <!-- TODO: In RecordTrac, use the SENDGRID_USERNAME and SENDGRID_PASSWORD so that we can have Heroku set up SendGrid automatically and avoid having the user go through that step here. Also, see if we can pull the montly limit from the SendGrid API. -->
+            <label><input type="text" name="MAIL_USERNAME"> SendGrid Username</label>
+            <label><input type="password" name="MAIL_PASSWORD"> SendGrid Password</label>
+            <label><input type="number" name="SENDGRID_MONTHLY_LIMIT" value="40000"> SendGrid Monthly Limit</label>
             <label><input type="email" placeholder="e.g., noreply@agency.gov" name="DEFAULT_MAIL_SENDER"> Default &ldquo;From&rdquo; Email</label>
           </fieldset>
 

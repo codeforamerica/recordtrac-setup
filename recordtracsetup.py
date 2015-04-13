@@ -64,8 +64,9 @@ def prepare_app():
         SCRIBD_API_KEY = request.form.get('SCRIBD_API_KEY') or ns,
         SCRIBD_API_SECRET = request.form.get('SCRIBD_API_SECRET') or ns,
         # HOST_URL = request.form.get('HOST_URL', ns),
-        # MAIL_USERNAME = request.form.get('MAIL_USERNAME', ns),
-        # MAIL_PASSWORD = request.form.get('MAIL_PASSWORD', ns),
+        MAIL_USERNAME = request.form.get('MAIL_USERNAME') or ns,
+        MAIL_PASSWORD = request.form.get('MAIL_PASSWORD') or ns,
+        SENDGRID_MONTHLY_LIMIT = request.form.get('SENDGRID_MONTHLY_LIMIT') or ns,
         DEFAULT_MAIL_SENDER = request.form.get('DEFAULT_MAIL_SENDER') or ns,
         # SQLALCHEMY_DATABASE_URI = request.form.get('SQLALCHEMY_DATABASE_URI', 'postgresql://localhost/recordtrac'),
         AKISMET_KEY = request.form.get('AKISMET_KEY') or ns,
@@ -80,7 +81,7 @@ def prepare_app():
         )
 
 
-    app_json = dict(name='RecordTrac', env=env, addons=['heroku-postgresql:hobby-dev', 'sendgrid'],
+    app_json = dict(name='RecordTrac', env=env, addons=['heroku-postgresql:hobby-dev'],
                     scripts=dict(postdeploy='python db_setup.py'))
 
     tarpath = prepare_tarball('http://github.com/codeforamerica/recordtrac/tarball/master/',
