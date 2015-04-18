@@ -34,6 +34,23 @@
   <!-- (Optional) Link to a 60x60 bookmark icon for iOS -->
   <link rel="apple-touch-icon-precomposed" href="{{ style_base }}/style/favicons/60x60/flag-red.png"/>
 
+  <style>
+  .screenshots {
+    margin: 1em 0;
+    text-align: center;
+  }
+  .screenshots img {
+    box-shadow: 2px 4px 6px 2px rgba(0,0,0,0.25);
+    width: 40%;
+  }
+
+  @media screen and (max-width: 400px) {
+    .screenshots img {
+      width: 100%;
+    }
+  }
+  </style>
+
 </head>
 
 <body>
@@ -99,9 +116,15 @@
 
           <p>RecordTrac uses <a href="http://akismet.com/" target="_blank">Akismet</a> and <a href="https://www.google.com/recaptcha/" target="_blank">ReCaptcha</a> to protect against spam.</p>
           <ul>
-            <li>Sign up for an <strong>Akismet</strong> account <a href="http://akismet.com/plans/" target="_blank">here</a>. Paste your API Key below. Find your key by clicking the <i>Show</i> button in your <i>Account Overview</i>.</li>
+            <li>Sign up for an <strong>Akismet</strong> account <a href="http://akismet.com/plans/" target="_blank">here</a>. Paste your API Key below. Find your key by clicking the <i>Show</i> button in your <i>Account Overview</i>.
+              <div class="screenshots">
+                <img src="/static/akismet-screenshot.png">
+              </div>
             </li>
             <li>Sign up for a <strong>reCaptcha</strong> account <a href="https://www.google.com/recaptcha/" target="_blank">here</a>. After logging in, regsiter your site. If you know what domain you will use for your RecordTrac, enter it in the <i>Domains</i> box. Otherwise, you can just enter <code>herokuapp.com</code>. Expand the <i>Keys</i> and paste the site key and site secret below.
+              <div class="screenshots">
+                <img src="/static/recaptcha-screenshot.png">
+              </div>
             </li>
           </ul>
           <fieldset>
@@ -130,7 +153,10 @@
 
           <p>When a document is uploaded, it must go somewhere accessible from the application server.  The default document storage service is <a href="https://www.scribd.com/" targer="_blank">Scribd</a>.
           <ul>
-            <li>Sign up for a <strong>Scribd</strong> account <a href="https://www.scribd.com/developers/signup_api" target="_blank">here</a>. Paste your API Key and API Secret below. You can find and update your API account information in your <a href="https://www.scribd.com/account-settings/api" target="_blank">Account Settings</a>.</li>
+            <li>Sign up for a <strong>Scribd</strong> account <a href="https://www.scribd.com/developers/signup_api" target="_blank">here</a>. Paste your API Key and API Secret below. You can find and update your API account information in your <a href="https://www.scribd.com/account-settings/api" target="_blank">Account Settings</a>.
+              <div class="screenshots">
+                <img src="/static/scribd-screenshot.png">
+              </div></li>
             </li>
           </ul>
           <fieldset>
